@@ -80,7 +80,16 @@ class _LoginViewState extends ConsumerState<LoginView> {
                   ),
                 ),
                 const SizedBox(
-                  height: 40,
+                  height: 20,
+                ),
+                const Center(
+                  child: Text(
+                    "or",
+                    style: TextStyle(color: Pallete.whiteColor, fontSize: 14),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 RichText(
                   text: TextSpan(
