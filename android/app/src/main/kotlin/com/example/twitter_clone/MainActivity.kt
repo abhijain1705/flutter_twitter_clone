@@ -1,4 +1,4 @@
-package com.example.twitter_clone
+package com.example.creditBook
 
 import io.flutter.embedding.android.FlutterActivity
 

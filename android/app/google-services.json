@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "967047249888",
+    "project_id": "grow-2d103",
+    "storage_bucket": "grow-2d103.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967047249888:android:0a8dc2d4b54313ab447585",
+        "android_client_info": {
+          "package_name": "com.example.creditBook"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967047249888-vdc6b6hj90faji1a30ukqipk5o630uhb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.creditBook",
+            "certificate_hash": "cc18ae8e1446b357f22128f0859581b953e2cfa9"
+          }
+        },
+        {
+          "client_id": "967047249888-7vtaatcjj7lkfr6h1hon0uuaepiu2d4l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgLxe2P9KQhrLaRmNr8Ch1vNBX2c2k6kU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "967047249888-7vtaatcjj7lkfr6h1hon0uuaepiu2d4l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "967047249888-33t7mkv3oof5q6sro0qnkj57ifmilfuu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.grow"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

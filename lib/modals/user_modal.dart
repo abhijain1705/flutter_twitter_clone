@@ -12,7 +12,7 @@ class UserModal {
   final String bannerPicture;
   final String uid;
   final String bio;
-  final String isTwitterBlue;
+  final bool isTwitterBlue;
   final DateTime dateOfJoin;
   final DateTime dateOfBirth;
   final String website;
@@ -46,7 +46,7 @@ class UserModal {
     String? bannerPicture,
     String? uid,
     String? bio,
-    String? isTwitterBlue,
+    bool? isTwitterBlue,
     DateTime? dateOfJoin,
     DateTime? dateOfBirth,
     String? website,
@@ -81,7 +81,6 @@ class UserModal {
       'followings': followings,
       'profilePicture': profilePicture,
       'bannerPicture': bannerPicture,
-      'uid': uid,
       'bio': bio,
       'isTwitterBlue': isTwitterBlue,
       'dateOfJoin': dateOfJoin.millisecondsSinceEpoch,
@@ -101,9 +100,9 @@ class UserModal {
       followings: List<String>.from((map['followings'] as List<String>)),
       profilePicture: map['profilePicture'] as String,
       bannerPicture: map['bannerPicture'] as String,
-      uid: map['uid'] as String,
+      uid: map['\$uid'] as String,
       bio: map['bio'] as String,
-      isTwitterBlue: map['isTwitterBlue'] as String,
+      isTwitterBlue: map['isTwitterBlue'] as bool,
       dateOfJoin: DateTime.fromMillisecondsSinceEpoch(map['dateOfJoin'] as int),
       dateOfBirth:
           DateTime.fromMillisecondsSinceEpoch(map['dateOfBirth'] as int),

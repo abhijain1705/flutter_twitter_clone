@@ -7,6 +7,7 @@ class AssetsConstants {
   static const String notifOutlinedIcon = '$_svgsPath/notif_outlined.svg';
   static const String searchIcon = '$_svgsPath/search.svg';
   static const String tickIcon = '$_svgsPath/tick.svg';
+  static const String onboardingImage = '$_svgsPath/T.jpg';
   static const String gifIcon = '$_svgsPath/gif.svg';
   static const String emojiIcon = '$_svgsPath/emoji.svg';
   static const String galleryIcon = '$_svgsPath/gallery.svg';
