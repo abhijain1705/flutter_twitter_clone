@@ -1,15 +1,25 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/apis/auth_api.dart';
-import 'package:appwrite/models.dart' as model;
+import 'package:twitter_clone/apis/storage_provider.dart';
 import 'package:twitter_clone/apis/user_api.dart';
-import 'package:twitter_clone/core/utils.dart';
-import 'package:twitter_clone/features/home/view/home_view.dart';
+import 'package:twitter_clone/modals/user_modal.dart';
+import '../../../core/utils.dart';
+
+enum ImageType {
+  profilePicture,
+  cardPicture,
+}
 
 final authControllerProvider =
     StateNotifierProvider<AuthController, bool>((ref) {
   return AuthController(
-      authAPI: ref.watch(authAPIProvider), userAPI: ref.watch(userApiProvider));
+      authAPI: ref.watch(authAPIProvider),
+      userAPI: ref.watch(userApiProvider),
+      storage: ref.watch(storageRepositoryProvider));
 });
 
 final currentUserAccountProvider = FutureProvider((ref) {
@@ -20,26 +30,35 @@ final currentUserAccountProvider = FutureProvider((ref) {
 class AuthController extends StateNotifier<bool> {
   final AuthAPI _authAPI;
   final UserAPI _userAPI;
-  AuthController({required AuthAPI authAPI, required UserAPI userAPI})
+  final MyStorageRepository _storage;
+  AuthController(
+      {required AuthAPI authAPI,
+      required UserAPI userAPI,
+      required MyStorageRepository storage})
       : _authAPI = authAPI,
         _userAPI = userAPI,
+        _storage = storage,
         super(false);
 
-  Future<model.User?> currentUser() => _authAPI.currentUser();
+  Future<User?> currentUser() => _authAPI.currentUser();
 
-  // void login({
-  //   required String email,
-  //   required String password,
-  //   required BuildContext context,
-  // }) async {
-  //   state = true;
-  //   final res = await _authAPI.login(email: email, password: password);
-  //   state = false;
-  //   res.fold((l) => showSnackBar(context, l.message), (r) {
-  //     showSnackBar(context, "Logged In Successfully!");
-  //     Future.delayed(const Duration(seconds: 2), () {
-  //       Navigator.push(context, HomeView.route());
-  //     });
-  //   });
-  // }
+  void addPicture(
+      {File? picture,
+      String? uniqueId,
+      String? path,
+      required BuildContext context,
+      required UserModal userModal,
+      required ImageType imageType}) async {
+    if (picture != null && uniqueId != null && path != null) {
+      final res =
+          await _storage.storeFile(path: path, id: uniqueId, file: picture);
+      res.fold((l) => showSnackBar(context, l.message), (r) {
+        if (imageType == ImageType.cardPicture) {
+          userModal = userModal.copyWith(cardPicture: r);
+        } else {
+          userModal = userModal.copyWith(profilePicture: r);
+        }
+      });
+    }
+  }
 }

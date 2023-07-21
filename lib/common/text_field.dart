@@ -27,14 +27,14 @@ class InputField extends StatelessWidget {
           ? <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]
           : [], // Only numbers can be entered
       decoration: InputDecoration(
-          hintStyle: const TextStyle(fontSize: 18, color: Pallete.offWhite),
+          hintStyle: TextStyle(fontSize: 18, color: textColor.withOpacity(0.7)),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(5),
-            borderSide: const BorderSide(color: Pallete.whiteColor, width: 3),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: textColor, width: 2),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: Pallete.whiteColor),
+            borderSide: BorderSide(color: textColor),
           ),
           contentPadding: const EdgeInsets.all(22),
           hintText: hintText),

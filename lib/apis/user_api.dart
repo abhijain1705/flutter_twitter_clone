@@ -1,4 +1,5 @@
 import 'package:appwrite/appwrite.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/constants/constants.dart';
 import 'package:twitter_clone/core/core.dart';
@@ -7,7 +8,7 @@ import 'package:twitter_clone/core/providers.dart';
 import 'package:twitter_clone/modals/user_modal.dart';
 
 final userApiProvider = Provider((ref) {
-  final db = ref.watch(appwriteDatabaseProvider);
+  final db = ref.watch(firestoreProvider);
   return UserAPI(db: db);
 });
 
@@ -16,16 +17,12 @@ abstract class IUserAPI {
 }
 
 class UserAPI implements IUserAPI {
-  final Databases _db;
-  UserAPI({required Databases db}) : _db = db;
+  final FirebaseFirestore _db;
+  UserAPI({required FirebaseFirestore db}) : _db = db;
   @override
   FutureEitherVoid saveUserData(UserModal userModal) async {
     try {
-      await _db.createDocument(
-          databaseId: AppwriteConstants.databseId,
-          collectionId: AppwriteConstants.userCollection,
-          documentId: ID.unique(),
-          data: userModal.toMap());
+      await _db.collection(FirebaseConstants.databseId).add(userModal.toMap());
       return right(null);
     } on AppwriteException catch (e, stackTrace) {
       return left(

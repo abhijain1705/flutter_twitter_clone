@@ -1,10 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:twitter_clone/common/common.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/auth/view/onboarding_view.dart';
-import 'package:twitter_clone/features/auth/view/otp_view.dart';
+import 'package:twitter_clone/features/auth/view/register_view.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
 import 'package:twitter_clone/theme/theme.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
@@ -12,7 +13,8 @@ import 'package:stack_trace/stack_trace.dart' as stack_trace;
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
+      .then((_) async {
+    await Firebase.initializeApp();
     runApp(const ProviderScope(child: MyApp()));
   });
   FlutterError.demangleStackTrace = (StackTrace stack) {
@@ -34,10 +36,12 @@ class MyApp extends ConsumerWidget {
         theme: AppTheme.theme,
         home: ref.watch(currentUserAccountProvider).when(
             data: (user) {
+              debugPrint("sasfaer$user");
+              return const RegisterView();
               // if (user != null) {
               //   return const HomeView();
               // }
-              return const OTPView();
+              // return const OnboardingView();
             },
             error: (error, st) => ErrorPage(text: error.toString()),
             loading: () => const LoadingPage()));

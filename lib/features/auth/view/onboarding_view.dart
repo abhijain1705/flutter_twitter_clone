@@ -7,9 +7,12 @@ import 'package:twitter_clone/core/utils.dart';
 import 'package:twitter_clone/features/auth/view/otp_view.dart';
 import 'package:twitter_clone/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class OnboardingView extends ConsumerStatefulWidget {
   const OnboardingView({Key? key}) : super(key: key);
+
+  static String verificationId = '';
 
   @override
   ConsumerState<OnboardingView> createState() => _OnboardingViewState();
@@ -17,28 +20,58 @@ class OnboardingView extends ConsumerStatefulWidget {
 
 class _OnboardingViewState extends ConsumerState<OnboardingView> {
   final TextEditingController numberController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the SIM mobile number when the view is loaded
+    getSimMobileNumber();
+  }
 
+  Future<void> getSimMobileNumber() async {
+    if (!mounted) return;
+    final phoneNumber = await SmsAutoFill().hint;
+    if (phoneNumber == null) return;
+    if (!mounted) return;
+    numberController.text = phoneNumber;
+    getOtp();
+  }
+
+  bool loading = false;
   Future getOtp() async {
+    if (numberController.text.length < 10) {
+      showSnackBar(context, "Please write correct Phone Number");
+      return;
+    }
     try {
+      setState(() {
+        loading = true;
+      });
       await ref.watch(fireAuthProvider).verifyPhoneNumber(
           phoneNumber: numberController.text.startsWith("+91")
               ? numberController.text
               : "+91${numberController.text}",
           verificationCompleted: (PhoneAuthCredential credential) async {
+            loading = false;
             await ref.watch(fireAuthProvider).signInWithCredential(credential);
           },
           verificationFailed: (FirebaseAuthException e) {
+            setState(() {
+              loading = false;
+            });
             showSnackBar(context, e.toString());
           },
           codeSent: (verificationId, forceResendingToken) async {
-            String smsCode = '';
-            PhoneAuthCredential credential = PhoneAuthProvider.credential(
-                verificationId: verificationId, smsCode: smsCode);
+            setState(() {
+              loading = false;
+            });
+            OnboardingView.verificationId = verificationId;
             Navigator.push(context, OTPView.route());
-            await ref.watch(fireAuthProvider).signInWithCredential(credential);
           },
           codeAutoRetrievalTimeout: (String verificationId) {});
     } catch (e) {
+      setState(() {
+        loading = false;
+      });
       showSnackBar(context, e.toString());
     }
   }
@@ -50,7 +83,7 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
       body: SingleChildScrollView(
         child: Container(
           height: MediaQuery.of(context).size.height,
-          color: const Color.fromRGBO(82, 105, 247, 1),
+          color: Pallete.blueColor,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,7 +125,11 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
                       const SizedBox(
                         height: 10,
                       ),
-                      RoundedSmallButton(onTap: () {}, label: "Get OTP")
+                      RoundedSmallButton(
+                        onTap: getOtp,
+                        label: "Get OTP",
+                        loading: loading,
+                      )
                     ],
                   ),
                 ),
