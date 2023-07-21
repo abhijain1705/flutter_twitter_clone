@@ -1,4 +1,3 @@
-import 'package:appwrite/appwrite.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:twitter_clone/constants/constants.dart';
@@ -24,7 +23,7 @@ class UserAPI implements IUserAPI {
     try {
       await _db.collection(FirebaseConstants.databseId).add(userModal.toMap());
       return right(null);
-    } on AppwriteException catch (e, stackTrace) {
+    } on FirebaseException catch (e, stackTrace) {
       return left(
           Failure(e.message ?? 'Some Unexpected Error Occured!', stackTrace));
     } catch (e, stackTrace) {
