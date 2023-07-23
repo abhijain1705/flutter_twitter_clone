@@ -1,19 +1,24 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:twitter_clone/common/common.dart';
+import 'package:twitter_clone/constants/constants.dart';
 import 'package:twitter_clone/constants/ui_constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:twitter_clone/core/utils.dart';
+import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
+import 'package:twitter_clone/modals/user_modal.dart';
 import 'package:twitter_clone/theme/pallete.dart';
-import '../../../constants/assets_constants.dart';
 
-class RegisterView extends StatefulWidget {
-  const RegisterView({super.key});
+class RegisterView extends ConsumerStatefulWidget {
+  final String phoneNumber;
+  final String uid;
+  const RegisterView({super.key, required this.phoneNumber, required this.uid});
 
   @override
-  State<RegisterView> createState() => _RegisterViewState();
+  ConsumerState<RegisterView> createState() => _RegisterViewState();
 }
 
 enum ImageType {
@@ -21,7 +26,7 @@ enum ImageType {
   cardImage,
 }
 
-class _RegisterViewState extends State<RegisterView> {
+class _RegisterViewState extends ConsumerState<RegisterView> {
   TextEditingController ownerName = TextEditingController();
   TextEditingController shopName = TextEditingController();
   TextEditingController shopAddress = TextEditingController();
@@ -31,6 +36,7 @@ class _RegisterViewState extends State<RegisterView> {
   TextEditingController document = TextEditingController();
   File? profileImage;
   File? cardImage;
+  bool loading = false;
 
   Future<void> pickImage(ImageType imageType) async {
     try {
@@ -49,6 +55,71 @@ class _RegisterViewState extends State<RegisterView> {
       debugPrint('sadcd${e.toString()}');
       showSnackBar(context, "Error In Opening Camera");
     }
+  }
+
+  void saveUserDataToDatabase() {
+    UserModal userModal;
+    if (ownerName.text.isEmpty) {
+      showSnackBar(context, "Owner Name is Empty");
+      return;
+    }
+
+    if (shopName.text.isEmpty) {
+      showSnackBar(context, "Shop Name is Empty");
+      return;
+    }
+
+    if (shopAddress.text.isEmpty) {
+      showSnackBar(context, "Shop Address is Empty");
+      return;
+    }
+
+    if (pinCode.text.isEmpty) {
+      showSnackBar(context, "PIN Code is Empty");
+      return;
+    }
+
+    if (document.text.isEmpty) {
+      showSnackBar(context, "Document Number is Empty");
+      return;
+    }
+
+    if (profileImage == null || cardImage == null) {
+      showSnackBar(context, "Images are required");
+      return;
+    }
+
+    setState(() {
+      loading = true;
+    });
+    userModal = UserModal(
+        ownerName: ownerName.text,
+        shopName: shopName.text,
+        shopAddress: shopAddress.text,
+        pinCode: pinCode.text,
+        profilePicture: '',
+        cardPicture: '',
+        document: document.text,
+        mobileNumber: widget.phoneNumber,
+        dateOfJoin: DateTime.now());
+    debugPrint("userToStore$userModal");
+    ref.watch(authControllerProvider.notifier).addUserToDatabase(
+          userModal: userModal,
+          context: context,
+          profilePicture: profileImage,
+          cardPicture: cardImage,
+          uiqueId: widget.uid,
+          callToStop: () {
+            setState(() {
+              loading = false;
+            });
+          },
+          profilePicturePath: FirebaseConstants.profilePicturePath,
+          profilePictureUniqueId:
+              'profileImages${widget.uid}-${DateTime.now()}',
+          cardPicturePath: FirebaseConstants.cardPicturePath,
+          cardPictureUniqueId: 'cardImages${widget.uid}-${DateTime.now()}',
+        );
   }
 
   @override
@@ -146,7 +217,10 @@ class _RegisterViewState extends State<RegisterView> {
                         ? const Center(
                             child: Text("Pick Card"),
                           )
-                        : Image.file(cardImage!.absolute, fit: BoxFit.cover,),
+                        : Image.file(
+                            cardImage!.absolute,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                 ),
                 const SizedBox(
@@ -160,7 +234,13 @@ class _RegisterViewState extends State<RegisterView> {
                 const SizedBox(
                   height: 15,
                 ),
-                RoundedSmallButton(onTap: () {}, label: "Register Business", backgroundColor: Pallete.backgroundColor, textColor: Pallete.whiteColor,)
+                RoundedSmallButton(
+                  onTap: saveUserDataToDatabase,
+                  label: "Register Business",
+                  loading: loading,
+                  backgroundColor: Pallete.backgroundColor,
+                  textColor: Pallete.whiteColor,
+                )
               ],
             ),
           ),

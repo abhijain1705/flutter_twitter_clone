@@ -1,15 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:twitter_clone/constants/assets_constants.dart';
 import 'package:twitter_clone/common/common.dart';
-import 'package:twitter_clone/core/providers.dart';
 import 'package:twitter_clone/core/utils.dart';
+import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/auth/view/otp_view.dart';
 import 'package:twitter_clone/theme/theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 class OnboardingView extends ConsumerStatefulWidget {
+  static route() => MaterialPageRoute(
+        builder: (context) => const OnboardingView(),
+      );
   const OnboardingView({Key? key}) : super(key: key);
 
   static String verificationId = '';
@@ -37,43 +39,34 @@ class _OnboardingViewState extends ConsumerState<OnboardingView> {
   }
 
   bool loading = false;
-  Future getOtp() async {
+  void getOtp() async {
     if (numberController.text.length < 10) {
       showSnackBar(context, "Please write correct Phone Number");
       return;
     }
-    try {
-      setState(() {
-        loading = true;
-      });
-      await ref.watch(fireAuthProvider).verifyPhoneNumber(
-          phoneNumber: numberController.text.startsWith("+91")
-              ? numberController.text
-              : "+91${numberController.text}",
-          verificationCompleted: (PhoneAuthCredential credential) async {
+    setState(() {
+      loading = true;
+    });
+    ref.watch(authControllerProvider.notifier).signInWithPhoneNumber(
+        number: numberController.text,
+        onComplete: () {
+          setState(() {
             loading = false;
-            await ref.watch(fireAuthProvider).signInWithCredential(credential);
-          },
-          verificationFailed: (FirebaseAuthException e) {
-            setState(() {
-              loading = false;
-            });
-            showSnackBar(context, e.toString());
-          },
-          codeSent: (verificationId, forceResendingToken) async {
-            setState(() {
-              loading = false;
-            });
-            OnboardingView.verificationId = verificationId;
-            Navigator.push(context, OTPView.route());
-          },
-          codeAutoRetrievalTimeout: (String verificationId) {});
-    } catch (e) {
-      setState(() {
-        loading = false;
-      });
-      showSnackBar(context, e.toString());
-    }
+          });
+        },
+        onFailed: () {
+          setState(() {
+            loading = false;
+          });
+        },
+        onSent: (String verificationId) {
+          setState(() {
+            loading = false;
+          });
+          OnboardingView.verificationId = verificationId;
+          Navigator.push(context, OTPView.route());
+        },
+        context: context);
   }
 
   @override

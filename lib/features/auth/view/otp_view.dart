@@ -5,8 +5,8 @@ import 'package:sms_autofill/sms_autofill.dart';
 import 'package:twitter_clone/common/common.dart';
 import 'package:twitter_clone/core/providers.dart';
 import 'package:twitter_clone/core/utils.dart';
+import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/auth/view/onboarding_view.dart';
-import 'package:twitter_clone/features/home/view/home_view.dart';
 import 'package:twitter_clone/theme/pallete.dart';
 
 class OTPView extends ConsumerStatefulWidget {
@@ -58,30 +58,26 @@ class _OTPViewState extends ConsumerState<OTPView> with CodeAutoFill {
     setState(() {
       loading = true;
     });
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: OnboardingView.verificationId,
-        smsCode: otpController.text);
-
-    await ref
-        .watch(fireAuthProvider)
-        .signInWithCredential(credential)
-        .then((value) {
-      setState(() {
-        loading = false;
-      });
-      showSnackBar(context, "OTP Verifies Successully");
-      Future.delayed(const Duration(seconds: 2), () {
-        HomeView.route();
-      });
-    }).catchError((e) {
-      setState(() {
-        loading = false;
-      });
-      showSnackBar(
-        context,
-        e.toString(),
-      );
-    });
+    // ignore: use_build_context_synchronously
+    ref.watch(authControllerProvider.notifier).verifyOTp(
+        verificationID: OnboardingView.verificationId,
+        otp: otpController.text,
+        onComplete: () {
+          setState(() {
+            loading = false;
+          });
+          showSnackBar(context, "OTP Verifies Successully");
+        },
+        onFailed: () {
+          setState(() {
+            loading = false;
+          });
+          showSnackBar(
+            context,
+            "Some Unexpected Error Occured",
+          );
+        },
+        context: context);
     // Show Snackbar after successful verification
   }
 
