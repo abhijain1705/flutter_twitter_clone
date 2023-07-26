@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import '../theme/theme.dart';
 import 'assets_constants.dart';
 
 class UIConstants {
@@ -29,19 +28,6 @@ class UIConstants {
                 height: 150,
               ),
             ),
-      bottom: onHome
-          ? const TabBar(
-              labelColor: Pallete.backgroundColor,
-              tabs: [
-                Tab(
-                  text: "Good Reviews",
-                ),
-                Tab(
-                  text: "Bad Reviews",
-                ),
-              ],
-            )
-          : null,
     );
   }
 }

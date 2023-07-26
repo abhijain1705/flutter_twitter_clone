@@ -11,6 +11,7 @@ class UserModal {
   final String document;
   final String mobileNumber;
   final DateTime dateOfJoin;
+  final String uid;
   UserModal({
     required this.ownerName,
     required this.shopName,
@@ -21,6 +22,7 @@ class UserModal {
     required this.document,
     required this.mobileNumber,
     required this.dateOfJoin,
+    required this.uid,
   });
 
   UserModal copyWith({
@@ -33,6 +35,7 @@ class UserModal {
     String? document,
     String? mobileNumber,
     DateTime? dateOfJoin,
+    String? uid,
   }) {
     return UserModal(
       ownerName: ownerName ?? this.ownerName,
@@ -44,6 +47,7 @@ class UserModal {
       document: document ?? this.document,
       mobileNumber: mobileNumber ?? this.mobileNumber,
       dateOfJoin: dateOfJoin ?? this.dateOfJoin,
+      uid: uid ?? this.uid,
     );
   }
 
@@ -58,6 +62,7 @@ class UserModal {
       'document': document,
       'mobileNumber': mobileNumber,
       'dateOfJoin': dateOfJoin.millisecondsSinceEpoch,
+      'uid': uid,
     };
   }
 
@@ -72,6 +77,7 @@ class UserModal {
       document: map['document'] as String,
       mobileNumber: map['mobileNumber'] as String,
       dateOfJoin: DateTime.fromMillisecondsSinceEpoch(map['dateOfJoin'] as int),
+      uid: map['uid'] as String,
     );
   }
 
@@ -81,7 +87,7 @@ class UserModal {
 
   @override
   String toString() {
-    return 'UserModal(ownerName: $ownerName, shopName: $shopName, shopAddress: $shopAddress, pinCode: $pinCode, profilePicture: $profilePicture, cardPicture: $cardPicture, document: $document, mobileNumber: $mobileNumber, dateOfJoin: $dateOfJoin)';
+    return 'UserModal(ownerName: $ownerName, shopName: $shopName, shopAddress: $shopAddress, pinCode: $pinCode, profilePicture: $profilePicture, cardPicture: $cardPicture, document: $document, mobileNumber: $mobileNumber, dateOfJoin: $dateOfJoin, uid: $uid)';
   }
 
   @override
@@ -97,7 +103,8 @@ class UserModal {
       other.cardPicture == cardPicture &&
       other.document == document &&
       other.mobileNumber == mobileNumber &&
-      other.dateOfJoin == dateOfJoin;
+      other.dateOfJoin == dateOfJoin &&
+      other.uid == uid;
   }
 
   @override
@@ -110,6 +117,7 @@ class UserModal {
       cardPicture.hashCode ^
       document.hashCode ^
       mobileNumber.hashCode ^
-      dateOfJoin.hashCode;
+      dateOfJoin.hashCode ^
+      uid.hashCode;
   }
 }

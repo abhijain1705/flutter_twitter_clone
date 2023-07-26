@@ -6,7 +6,6 @@ import 'package:twitter_clone/auth_state.dart';
 import 'package:twitter_clone/common/common.dart';
 import 'package:twitter_clone/features/auth/controller/auth_controller.dart';
 import 'package:twitter_clone/features/auth/view/onboarding_view.dart';
-import 'package:twitter_clone/features/auth/view/register_view.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:twitter_clone/theme/theme.dart';
 import 'package:stack_trace/stack_trace.dart' as stack_trace;
@@ -40,10 +39,9 @@ class MyApp extends ConsumerWidget {
         theme: AppTheme.theme,
         home: ref.watch(authStateChangeProvider).when(
             data: (user) {
-              debugPrint("sasfaer$user");
               if (user != null) {
                 return AuthState(
-                  phoneNumber: user.phoneNumber!,
+                  phoneNumber: user.phoneNumber ?? '',
                   uid: user.uid,
                 );
               }

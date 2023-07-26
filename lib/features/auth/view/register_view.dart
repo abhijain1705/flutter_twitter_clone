@@ -100,6 +100,7 @@ class _RegisterViewState extends ConsumerState<RegisterView> {
         profilePicture: '',
         cardPicture: '',
         document: document.text,
+        uid: widget.uid,
         mobileNumber: widget.phoneNumber,
         dateOfJoin: DateTime.now());
     debugPrint("userToStore$userModal");
